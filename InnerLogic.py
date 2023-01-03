@@ -44,8 +44,10 @@ class Board:
     @add_ship.setter
     def add_ship(self, ship):
         self.ships_all += ship
+    def contour(self): # Draw a contour around ship
 
-    #def contour(self):
-    #def board_print(self):
-    #def out(self):
-    #def shot(self):
+    def board_print(self):
+
+    def out(self):
+
+    def shot(self):
