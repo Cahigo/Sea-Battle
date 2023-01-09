@@ -1,50 +1,63 @@
-from Exceptions import BoardOutException
+from Exceptions import *
 
 class Dot:
     def __init__(self, x, y):
-        self.x = x;
-        self.y = y;
+        self.x = x
+        self.y = y
 
     def __eq__(self, other):
         return self.x == other.x and self.y == other.y
 
-    @property
-    def Coordinates(self):
-        return self._x and self._y
-
-    @Coordinates.setter
-    def Coordinates(self, x, y):
-        if (1 <= x <= 6) and ((1 <= y <= 6)):
-            self._x = x
-            self._y = y
-        else:
-            raise BoardOutException("Value must be between 1..6")
+    def __repr__(self):
+        return f"Dot({self.x}, {self.y})"
 
 class Ship:
-    def __init__(self, size, bow, direction, hp):
-        self.size = size;
-        self.bow = bow;
-        self.direction = direction
+    def __init__(self, bow, direct: bool, hp):
+        self.bow = bow
+        self.direct = direct  # 0 - Horizontal, 1 - Vertical
         self.hp = hp
 
-    def dots(self, size, hp):
-        return size - hp
+    @property
+    def dots(self, size):
+        ship_dots = []
+        for i in range(self.hp):
+            current_x = self.bow.x
+            current_y = self.bow.y
+            if self.direct == 0:
+                current_x += i
+            elif self.direct == 1:
+                current_y += i
+            ship_dots.append(Dot(current_x, current_y))
+
+    def hit(self, shot):
+          return shot in self.dots
 
 class Board:
-    def __init__(self, board, ships_all, hid: bool, ships_remain):
-        self.board = board
-        self.ships_all = ships_all
+    def __init__(self, hid: bool, size = 6):
+        self.size = size
         self.hid = hid
-        self.ships_remain = ships_remain
 
-    @property
-    def add_ship(self):
-        return self._ships_all
+        self.field = [["O"] * size for _ in range(size)]
 
-    @add_ship.setter
-    def add_ship(self, ship):
-        self.ships_all += ship
+        self.used = []
+        self.ships = []
+
+    def __str__(self):
+        board = ""
+        board += "  | 1 | 2 | 3 | 4 | 5 | 6 |"
+        for i, row in enumerate(self.field):
+            board += f"\n{i + 1} | " + " | ".join(row) + " | "
+
+        if self.hid:
+            board = board.replace("O", "F")
+
+        return board
+
+    def out(self, d: Dot):
+        return not (0 <= d.x < self.size) and (0 <= d.y < self.size)
+
     def contour(self): # Draw a contour around ship
+
 
     def board_print(self):
 

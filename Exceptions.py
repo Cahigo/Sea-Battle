@@ -1,38 +1,18 @@
-class BoardOutException(Exception): # If coordinates are out of the game board
-    def __init__(self, *args):
-        if args:
-            self.message = args[0]
-        else:
-            self.message = None
-
+class DotIsOutException(Exception):  # If coordinates are out of the game board
     def __str__(self):
-        if self.message:
-            return f"BoardOutExceptions, {self.message}"
-        else:
-            return "BoardOutException has been raised"
+        return "Dot is out of the board"
 
-class ShipIsOutException(Exception): # If ship's placement is out of game board
-    def __init__(self, *args):
-        if args:
-            self.message = args[0]
-        else:
-            self.message = None
 
+class ShipIsOutException(Exception):  # If ship's placement is out of game board
     def __str__(self):
-        if self.message:
-            return f"ShipIsOutException, {self.message}"
-        else:
-            return "ShipIsOutException has been raised"
+        return "Ship placement is out of the board"
 
-class ShotIsOutException(Exception): # If shot is out of game board
-    def __init__(self, *args):
-        if args:
-            self.message = args[0]
-        else:
-            self.message = None
 
+class ShotIsOutException(Exception):  # If shot is out of game board
     def __str__(self):
-        if self.message:
-            return f"ShotIsOutException, {self.message}"
-        else:
-            return "ShotIsOutException has been raised"
+        return "Shot is out of the board"
+
+
+class ShotWasDealtException(Exception):  # If empty dot already was shot
+    def __str__(self):
+        return "This dot was already shot"
