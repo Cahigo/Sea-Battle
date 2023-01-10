@@ -1,6 +1,6 @@
-class DotIsOutException(Exception):  # If coordinates are out of the game board
+class DotOutOrUsedException(Exception):  # If coordinates are out of the game board
     def __str__(self):
-        return "Dot is out of the board"
+        return "Dot is out of the board or already occupied"
 
 
 class ShipIsOutException(Exception):  # If ship's placement is out of game board
