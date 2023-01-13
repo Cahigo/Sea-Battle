@@ -1,5 +1,6 @@
 from Exceptions import *
 
+
 class Dot:
     def __init__(self, x, y):
         self.x = x
@@ -11,8 +12,9 @@ class Dot:
     def __repr__(self):
         return f"Dot({self.x}, {self.y})"
 
+
 class Ship:
-    def __init__(self, bow, direct: bool, hp):
+    def __init__(self, bow, direct, hp):
         self.bow = bow
         self.direct = direct  # 0 - Horizontal, 1 - Vertical
         self.hp = hp
@@ -28,17 +30,19 @@ class Ship:
             elif self.direct == 1:
                 current_y += i
             ship_dots.append(Dot(current_x, current_y))
+        return ship_dots
 
     def hit(self, shot):
-          return shot in self.dots
+        return shot in self.dots
+
 
 class Board:
-    def __init__(self, hid: bool, size = 6):
+    def __init__(self, hid=False, size=6):
         self.size = size
         self.hid = hid  # Is board hidden (for AI board)
 
-        self.count = 0  # For sunken ships
-        self.field = [["O"] * size for _ in range(size)]
+        self.sunken = 0  # For sunken ships
+        self.field = [["O"] * size for i in range(size)]
 
         self.used = []
         self.ships = []
@@ -51,13 +55,14 @@ class Board:
 
         if self.hid:
             board = board.replace("O", "F")
+            board = board.replace("♠", "F")
 
         return board
 
     def out(self, d: Dot):  # Check if dot is out of border
-        return not (0 <= d.x < self.size) and (0 <= d.y < self.size)
+        return not((0 <= d.x < self.size) and (0 <= d.y < self.size))
 
-    def contour(self, ship, hid = True):  # Draw a contour around ship
+    def contour(self, ship, hid=True):  # Draw a contour around ship
         contour = [[1, -1], [1, 0], [1, 1],
                    [0, -1], [0, 0], [0, 1],
                    [-1, -1], [-1, 0], [-1, 1]]
@@ -73,10 +78,11 @@ class Board:
     def add_ship(self, ship):
         for d in ship.dots:
             if self.out(d) or d in self.used:
-                raise DotOutOrUsedException
+                raise ShipIsOutException
 
         for d in ship.dots:
-            self.field[d.x][d.y] = "S"
+            if not self.hid:
+                self.field[d.x][d.y] = "♠"
             self.used.append(d)
 
         self.ships.append(ship)
@@ -88,15 +94,15 @@ class Board:
         if d in self.used:
             raise ShotWasDealtException
 
-        self.used(d)
+        self.used.append(d)
 
         for ship in self.ships:
             if ship.hit(d):
                 ship.hp -= 1
-                self.field[d.x][d.y] = "X"
+                self.field[d.x][d.y] = "x"
                 if ship.hp == 0:
-                    self.count += 1
-                    ship.contour(ship, hid = False)  # For sunken ships we draw a contour
+                    self.sunken += 1
+                    self.contour(ship, hid=False)  # For sunken ships we draw a contour
                     print("Ship was destroyed!")
                     return False
                 else:
@@ -107,5 +113,5 @@ class Board:
         print("Missed!")
         return False
 
-    def clean(self):
+    def clean_used(self):
         self.used = []
